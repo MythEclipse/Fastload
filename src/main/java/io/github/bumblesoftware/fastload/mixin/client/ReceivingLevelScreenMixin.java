@@ -4,6 +4,7 @@ import io.github.bumblesoftware.fastload.util.obj_holders.MutableObjectHolder;
 import net.minecraft.client.gui.screens.ReceivingLevelScreen;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
+import org.spongepowered.asm.mixin.gen.Accessor;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
@@ -15,14 +16,18 @@ import static io.github.bumblesoftware.fastload.common.FLCommonEvents.Events.BOO
 
 
 @Mixin(ReceivingLevelScreen.class)
-public class ReceivingLevelScreenMixin {
-    @Shadow private boolean oneTickSkipped;
+public abstract class ReceivingLevelScreenMixin {
+    @Accessor("oneTickSkipped")
+    public abstract boolean isOneTickSkipped();
+
+    @Accessor("oneTickSkipped")
+    public abstract void setOneTickSkipped(boolean value);
 
     @Inject(at = @At("HEAD"), method = "loadingPacketsReceived")
     public void tick(final CallbackInfo ci) {
-        final var returnValue = new MutableObjectHolder<>(oneTickSkipped);
+        final var returnValue = new MutableObjectHolder<>(isOneTickSkipped());
         if (BOOLEAN_EVENT.isNotEmpty(DTS_TICK))
                 BOOLEAN_EVENT.execute(List.of(DTS_TICK), true, returnValue);
-        oneTickSkipped = returnValue.getHeldObj();
+        setOneTickSkipped(returnValue.getHeldObj());
     }
 }
