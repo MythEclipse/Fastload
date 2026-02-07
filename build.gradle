@@ -24,11 +24,15 @@ repositories {
     mavenCentral()
     maven { url 'https://repo.spongepowered.org/repository/maven-public/' }
     maven { url 'https://maven.fabricmc.net/' }
+    maven { url 'https://maven.parchmentmc.org' }
 }
 
 dependencies {
     minecraft "com.mojang:minecraft:${project.minecraft_version}"
-    mappings loom.officialMojangMappings()
+    mappings loom.layered() {
+        officialMojangMappings()
+        parchment("org.parchmentmc.data:parchment-1.20.1:2023.09.03@zip")
+    }
     forge "net.minecraftforge:forge:${project.loader_version}"
 
     annotationProcessor 'org.spongepowered:mixin:0.8.5:processor'
